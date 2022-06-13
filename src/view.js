@@ -1,5 +1,5 @@
 export default class View {
-    static colors = {
+    static colors = { // list for selecting color based on index
         '1': 'purple',
         '2': 'yellow',
         '3': 'cyan',
@@ -9,12 +9,12 @@ export default class View {
         '7': 'blue'
     };
 
-    constructor(element, width, height, rows, columns) {
+    constructor(element, width, height, rows, columns) { // constructor for initiating canvas
         this.element = element;
         this.width = width;
         this.height = height;
 
-        this.canvas = document.createElement('canvas');
+        this.canvas = document.createElement('canvas'); // creating canvas
         this.canvas.width = this.width;
         this.canvas.height = this.height;
         this.canvas.style.margin = "30px auto";

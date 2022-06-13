@@ -1,9 +1,21 @@
 export default class Game {
-    score = 0;
-    lines = 0;
-    level = 0;
+    
+    static points = {
+        '1': 40,
+        '2': 100,
+        '3': 300,
+        '4': 1200
+    }
 
-    blocksList = [
+    score = 0; // setting zero score for start
+    lines = 0; // setting amount of fullfiled lines
+
+    get level() {
+        return Math.floor(this.lines * 0.1);
+    }
+
+
+    blocksList = [ // list with figures, each figure has different values cause of color detection in view.js
         [
             [0,0,0], // T
             [1,1,1],
@@ -49,9 +61,9 @@ export default class Game {
 
     playfield = this.createPlayfield(); // creating empty playfield
     
-    activePiece = this.createPiece(); // creating random piece
+    activePiece = this.createPiece(); // creating random piece (tetramino)
 
-    nextPiece = this.createPiece();
+    nextPiece = this.createPiece(); // preparing next random piece
     
     getState() { // method to show activePiece on playfield
 
@@ -88,19 +100,19 @@ export default class Game {
         return playfield; 
     }
     
-    randomPieceIndex() {
+    randomPieceIndex() { // generation of random index for type of tetramino
         return Math.floor(Math.random() * (7 - 0) + 0); 
     }
 
     createPiece() {
         const pieceIndex = this.randomPieceIndex();
         
-        console.log(pieceIndex);
-        console.log(this.blocksList);
+        // console.log(pieceIndex);
+        // console.log(this.blocksList);
         const generatedBlock = this.blocksList[pieceIndex];
-
+        
         return {
-            x: 0, // coordinates in playfield by horizontal 
+            x: Math.floor((10 - generatedBlock[0].length)/2), // coordinates in playfield by horizontal 
             y: 0, // coordinates in playfield by vertical
             blocks: generatedBlock
         }
@@ -155,6 +167,8 @@ export default class Game {
         if (this.isBumping() == true) {
             this.activePiece.y -= 1;
             this.lockPiece(); // locking in playfield
+            const clearedLines = this.clearLines();
+            this.updateScore(clearedLines);
             this.updatePiece(); // changing on next piece by using updatePiece()
         }
     }
@@ -186,6 +200,51 @@ export default class Game {
                     this.playfield[y + pieceY][x + pieceX] = blocks[y][x];
                 }
             }
+        }
+    }
+
+    clearLines() { // removing fullfilled lines
+        let lines = [];
+
+        for (let y = 19; y >= 0; y--) {
+            
+            let numberOfBlocks = 0;
+
+            for (let x = 0; x < 10; x++) {
+                if (this.playfield[y][x]) {
+                    numberOfBlocks += 1;
+                }
+            }
+
+            if (numberOfBlocks === 0) {
+                break;
+            }
+
+            else if (numberOfBlocks < 10) {
+                continue;
+            }
+
+            else if (numberOfBlocks === 10) {
+                lines.unshift(y);
+            }
+
+        }
+
+        for (let index of lines) {
+            this.playfield.splice(index, 1);
+            this.playfield.unshift(new Array(10).fill(0));
+        }
+        // console.log(lines);
+
+        return lines.length;
+
+    }
+    
+    updateScore(clearedLines) {
+        if (clearedLines > 0) {
+            this.score += Game.points[clearedLines] * (this.level * 1);
+            this.lines += clearedLines;
+            // console.log(this.score, this.lines);
         }
     }
 
