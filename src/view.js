@@ -1,4 +1,14 @@
 export default class View {
+    static colors = {
+        '1': 'purple',
+        '2': 'yellow',
+        '3': 'cyan',
+        '4': 'green',
+        '5': 'red',
+        '6': 'orange',
+        '7': 'blue'
+    };
+
     constructor(element, width, height, rows, columns) {
         this.element = element;
         this.width = width;
@@ -8,7 +18,6 @@ export default class View {
         this.canvas.width = this.width;
         this.canvas.height = this.height;
         this.canvas.style.margin = "30px auto";
-        this.canvas.style.border = "2px solid white";
         
         this.context = this.canvas.getContext('2d');
 
@@ -16,12 +25,9 @@ export default class View {
         this.blockHeight = (this.height / rows);
 
         this.element.appendChild(this.canvas);
-
     }
 
-    renderPlayfield({ playfield }) {
-
-        this.context.clearRect(0,0,this.width,this.height);
+    renderPlayfield(playfield) {
 
         for (let y = 0; y < playfield.length; y++) {
             const line = playfield[y];
@@ -30,16 +36,30 @@ export default class View {
                 const block = line[x];
                 
                 if (block != 0) {
-                    this.context.fillStyle = 'red';
-                    this.context.strokeStyle = 'white';
-                    this.context.lineWidth = 2;
-
-                    this.context.fillRect(x * this.blockWidth, y * this.blockHeight, this.blockWidth, this.blockHeight);
+                    this.renderBlock(x * this.blockWidth, y * this.blockHeight, this.blockWidth, this.blockHeight, View.colors[block]);
                 }
 
             }
             
         }
+    }
+    
+    renderBlock(x, y, width, height, color) {
+        this.context.fillStyle = color;
+        this.context.strokeStyle = 'white';
+        this.context.lineWidth = 2;
+
+        this.context.fillRect(x, y, width, height);
+        this.context.strokeRect(x, y, width, height);
+    }
+
+    clearScreen() {
+        this.context.clearRect(0, 0, this.width, this.height);
+    }
+    
+    render ({playfield}) {
+        this.clearScreen();
+        this.renderPlayfield(playfield);
     }
 
     

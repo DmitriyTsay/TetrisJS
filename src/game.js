@@ -2,21 +2,58 @@ export default class Game {
     score = 0;
     lines = 0;
     level = 0;
-    playfield = this.createPlayfield(); // creating playfield copy
-    
-    activePiece = { // our active tetramine
-        x: 0, // coordinates in playfield by horizontal 
-        y: 0, // coordinates in playfield by vertical
 
-        blocks: [ // our active piece structure
-            [0,1,0],
+    blocksList = [
+        [
+            [0,0,0], // T
             [1,1,1],
+            [0,1,0]
+        ],
+                
+        [
+            [2,2], // O
+            [2,2],
+        ],
+                
+        [
+            [0,0,0,0], // I
+            [3,3,3,3],
+            [0,0,0,0],
+            [0,0,0,0]
+        ],
+                
+        [
+            [0,4,4], // S
+            [4,4,0],
             [0,0,0]
         ],
+                
+        [
+            [5,5,0], // Z
+            [0,5,5],
+            [0,0,0]
+        ],
+                
+        [
+            [6,0,0], // L
+            [6,0,0],
+            [6,6,0]
+        ],
+                
+        [
+            [0,7,0], // J
+            [0,7,0],
+            [7,7,0]
+        ],
+    ];
 
-    };
+    playfield = this.createPlayfield(); // creating empty playfield
     
-    getState() {
+    activePiece = this.createPiece(); // creating random piece
+
+    nextPiece = this.createPiece();
+    
+    getState() { // method to show activePiece on playfield
 
         const playfield = this.createPlayfield();
         
@@ -39,7 +76,7 @@ export default class Game {
         };
     }
 
-    createPlayfield() {
+    createPlayfield() { // method to create empty playfield
         const playfield = [];
         for (let y = 0; y < 20; y++) {
             playfield[y] = [];
@@ -50,9 +87,26 @@ export default class Game {
         }
         return playfield; 
     }
+    
+    randomPieceIndex() {
+        return Math.floor(Math.random() * (7 - 0) + 0); 
+    }
 
+    createPiece() {
+        const pieceIndex = this.randomPieceIndex();
+        
+        console.log(pieceIndex);
+        console.log(this.blocksList);
+        const generatedBlock = this.blocksList[pieceIndex];
 
-    rotatePiece() {
+        return {
+            x: 0, // coordinates in playfield by horizontal 
+            y: 0, // coordinates in playfield by vertical
+            blocks: generatedBlock
+        }
+    }
+
+    rotatePiece() { // used for rotating piece (only if activepiece is not bumping)
         const blocks = this.activePiece.blocks;
         const lengthVertical = this.activePiece.blocks.length;
         const lengthHorizontal = this.activePiece.blocks[0].length;
@@ -79,7 +133,6 @@ export default class Game {
 
     }
 
-
     movePieceLeft() { // moving piece to the left by reducing X value
         this.activePiece.x -= 1;
 
@@ -101,7 +154,8 @@ export default class Game {
 
         if (this.isBumping() == true) {
             this.activePiece.y -= 1;
-            this.lockPiece();
+            this.lockPiece(); // locking in playfield
+            this.updatePiece(); // changing on next piece by using updatePiece()
         }
     }
 
@@ -110,9 +164,9 @@ export default class Game {
         
         for (let y = 0; y < blocks.length; y++) {
             for (let x = 0; x < blocks[y].length; x++) {
-                if (blocks[y][x] != 0 && 
-                    ((this.playfield[y + pieceY] === undefined || this.playfield[y + pieceY][x + pieceX] === undefined) ||
-                    (this.playfield[y + pieceY][x + pieceX] != 0))
+                if (blocks[y][x] != 0 && // checks elements of piece (only choose 1, not 0)
+                    ((this.playfield[y + pieceY] === undefined || this.playfield[y + pieceY][x + pieceX] === undefined) || // condition for out of border
+                    (this.playfield[y + pieceY][x + pieceX] != 0)) // condition for other pieces
                 ) {
                     return true;
                 }
@@ -133,6 +187,11 @@ export default class Game {
                 }
             }
         }
+    }
+
+    updatePiece() { // method to change active piece on next piece after lockPiece (used in movePieceDown())
+        this.activePiece = this.nextPiece;
+        this.nextPiece = this.createPiece();
     }
 
 };
