@@ -1,5 +1,11 @@
 * {
     font-family: 'Press Start 2P', cursive;
+    margin: auto;
+    box-sizing: border-box;
+}
+
+div {
+    text-align: center;
 }
 
 body {

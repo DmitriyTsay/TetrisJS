@@ -2,33 +2,7 @@ export default class Game {
     score = 0;
     lines = 0;
     level = 0;
-    playfield = [
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0], // 20
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0] // 25 - from 0-25 is invisible for player field (с 0-25 невидимое поле для игрока)
-    ];
+    playfield = this.createPlayfield(); // creating playfield copy
     
     activePiece = { // our active tetramine
         x: 0, // coordinates in playfield by horizontal 
@@ -41,6 +15,42 @@ export default class Game {
         ],
 
     };
+    
+    getState() {
+
+        const playfield = this.createPlayfield();
+        
+        for (let y = 0; y < this.playfield.length; y++) { // copying playfield
+            for (let x = 0; x < this.playfield[y].length; x++) {
+                playfield[y][x] = this.playfield[y][x];
+            }
+        }
+
+        for (let y = 0; y < this.activePiece.blocks.length; y++) { // copying actual location of active piece
+            for (let x = 0; x < this.activePiece.blocks[y].length; x++) {
+                if (this.activePiece.blocks[y][x] != 0) {
+                    playfield[y + this.activePiece.y][x + this.activePiece.x] = this.activePiece.blocks[y][x];
+                }
+            }
+        }
+
+        return {
+            playfield
+        };
+    }
+
+    createPlayfield() {
+        const playfield = [];
+        for (let y = 0; y < 20; y++) {
+            playfield[y] = [];
+            for (let x = 0; x < 10; x++) {
+                playfield[y][x] = 0;
+                
+            }
+        }
+        return playfield; 
+    }
+
 
     rotatePiece() {
         const blocks = this.activePiece.blocks;
