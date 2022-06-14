@@ -19,12 +19,55 @@ export default class View {
         this.canvas.height = this.height;
         this.canvas.style.margin = "30px auto";
         
+        this.playfieldBorderWidth = 4;
+        this.playfieldX = this.playfieldBorderWidth;
+        this.playfieldY = this.playfieldBorderWidth;
+        this.playfieldWidth = this.width * 2 / 3;
+        this.playfieldHeight = this.height;
+        
+        this.playfieldInnerWidth = this.playfieldWidth - this.playfieldBorderWidth * 2;
+        this.playfieldInnerHeight = this.playfieldHeight - this.playfieldBorderWidth * 2;
+
         this.context = this.canvas.getContext('2d');
 
-        this.blockWidth = (this.width / columns);
-        this.blockHeight = (this.height / rows);
+        this.blockWidth = (this.playfieldInnerWidth / columns);
+        this.blockHeight = (this.playfieldInnerHeight / rows);
+        
+        this.panelX = this.playfieldWidth + 10;
+        this.panelY = 0;
+        this.panelWidth = this.width / 3;
+        this.panelHeight = this.height;
 
         this.element.appendChild(this.canvas);
+    }
+    
+    renderStartScreen() {
+        this.context.fillStyle = 'white';
+        this.context.font = '18px "Press Start 2P"';
+        this.context.textAlign = 'center';
+        this.context.textBaseline = 'middle';
+        this.context.fillText('Press ENTER to Start', this.width / 2, this.height / 2);
+    }
+
+    renderPauseScreen() {
+        this.context.fillStyle = 'rgba(0,0,0,0.75)';
+        this.context.fillRect(0,0,this.width,this.height);
+        this.context.fillStyle = 'white';
+        this.context.font = '18px "Press Start 2P"';
+        this.context.textAlign = 'center';
+        this.context.textBaseline = 'middle';
+        this.context.fillText('Press ENTER to Start', this.width / 2, this.height / 2);
+    }
+
+    renderGameOver({score}) {
+        this.clearScreen();
+
+        this.context.fillStyle = 'white';
+        this.context.font = '18px "Press Start 2P"';
+        this.context.textAlign = 'center';
+        this.context.textBaseline = 'middle';
+        this.context.fillText(`GAME OVER`, this.width / 2, this.height / 2);
+        this.context.fillText(`Score: ${score}`, this.width / 2, this.height / 2 + 24);
     }
 
     renderPlayfield({playfield}) {
@@ -36,12 +79,27 @@ export default class View {
                 const block = line[x];
                 
                 if (block != 0) {
-                    this.renderBlock(x * this.blockWidth, y * this.blockHeight, this.blockWidth, this.blockHeight, View.colors[block]);
+                    this.renderBlock(
+                        this.playfieldX + x * this.blockWidth, 
+                        this.playfieldY + y * this.blockHeight, 
+                        this.blockWidth, 
+                        this.blockHeight, 
+                        View.colors[block]
+                        );
                 }
 
             }
-            
         }
+
+        this.context.strokeStyle = 'white';
+        this.context.lineWidth = this.playfieldBorderWidth;
+        this.context.strokeRect(
+            0,
+            0, 
+            this.playfieldWidth, 
+            this.playfieldHeight
+            );
+
     }
     
     renderPanel({level, score, lines, nextPiece}) {
@@ -50,10 +108,10 @@ export default class View {
         this.context.fillStyle = 'white';
         this.context.font = '14px "Press Start 2P"';
 
-        this.context.fillText(`Level: ${level}`, 0, 0);
-        this.context.fillText(`Score: ${score}`, 0, 24);
-        this.context.fillText(`Lines: ${lines}`, 0, 48);
-        this.context.fillText('Next', 0, 96);
+        this.context.fillText(`Level: ${level}`, 330, this.panelY + 0);
+        this.context.fillText(`Score: ${score}`, 330, this.panelY + 24);
+        this.context.fillText(`Lines: ${lines}`, 330, this.panelY + 48);
+        this.context.fillText('Next:', 330, this.panelY + 96);
 
         for (let y = 0; y < nextPiece.blocks.length; y++) {
             for (let x = 0; x < nextPiece.blocks[y].length; x++) {
@@ -61,10 +119,10 @@ export default class View {
 
                 if (block) {
                     this.renderBlock(
-                        x * this.blockWidth,
-                        y* this.blockHeight,
-                        this.blockWidth,
-                        this.blockHeight,
+                        330 + x * this.blockWidth * 0.5,
+                        120 + y * this.blockHeight * 0.5,
+                        this.blockWidth * 0.5,
+                        this.blockHeight * 0.5,
                         View.colors[block]
                     );
                 }

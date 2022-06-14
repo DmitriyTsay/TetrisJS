@@ -1,7 +1,6 @@
 * {
     font-family: 'Press Start 2P', cursive;
     margin: auto;
-    box-sizing: border-box;
 }
 
 div {
@@ -20,8 +19,4 @@ h1 {
 p {
     color: white;
     text-align: center;
-}
-
-canvas {
-    border: 2px solid white;
 }
