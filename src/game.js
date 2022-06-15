@@ -9,6 +9,7 @@ export default class Game {
 
     score = 0; // setting zero score for start
     lines = 0; // setting amount of fullfiled lines
+    topOut = false;
 
     get level() {
         if (Math.floor(this.lines * 0.1) > 0) {
@@ -19,7 +20,7 @@ export default class Game {
             return 1;
         }
 
-    }
+    };
 
 
     blocksList = [ // list with figures, each figure has different values cause of color detection in view.js
@@ -95,7 +96,8 @@ export default class Game {
             level: this.level,
             lines: this.lines,
             nextPiece: this.nextPiece,
-            playfield
+            playfield,
+            isGameOver: this.topOut
         };
     }
 
@@ -173,6 +175,8 @@ export default class Game {
     }
 
     movePieceDown() { // moving piece down by increasing Y value
+        if (this.topOut) return;
+
         this.activePiece.y += 1;
 
         if (this.isBumping() == true) {
@@ -181,6 +185,10 @@ export default class Game {
             const clearedLines = this.clearLines();
             this.updateScore(clearedLines);
             this.updatePiece(); // changing on next piece by using updatePiece()
+        }
+
+        if (this.isBumping()) {
+            this.topOut = true;
         }
     }
 
