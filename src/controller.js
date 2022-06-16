@@ -70,6 +70,13 @@ export default class Controller {
                         this.view.renderPauseScreen();
                     }
                     break;
+                case 32: // space
+                    console.log("Space pressed");
+                    while (this.game.flagForFalling != 1) {
+                        this.game.fallPieceDown();
+                    }
+                    this.game.flagForFalling = 0;
+                    break;
                 case 37: // left arrow
                     game.movePieceLeft();
                     this.updateView();
@@ -118,4 +125,5 @@ export default class Controller {
                 break;
         }
     }
+
 }

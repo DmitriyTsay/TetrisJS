@@ -73,6 +73,8 @@ export default class Game {
 
     nextPiece = this.createPiece(); // preparing next random piece
     
+    flagForFalling = 0;
+
     getState() { // method to show activePiece on playfield
 
         const playfield = this.createPlayfield();
@@ -185,6 +187,25 @@ export default class Game {
             const clearedLines = this.clearLines();
             this.updateScore(clearedLines);
             this.updatePiece(); // changing on next piece by using updatePiece()
+        }
+
+        if (this.isBumping()) {
+            this.topOut = true;
+        }
+    }
+
+    fallPieceDown() { // moving piece down by increasing Y value
+        if (this.topOut) return;
+
+        this.activePiece.y += 1;
+
+        if (this.isBumping() == true) {
+            this.activePiece.y -= 1;
+            this.lockPiece(); // locking in playfield
+            const clearedLines = this.clearLines();
+            this.updateScore(clearedLines);
+            this.updatePiece(); // changing on next piece by using updatePiece()
+            this.flagForFalling = 1;
         }
 
         if (this.isBumping()) {
