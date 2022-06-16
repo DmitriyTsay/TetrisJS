@@ -132,6 +132,20 @@ export default class View {
         }
     }
 
+    renderPlayfieldInnerBorder() {
+        const y = this.playfieldY;
+        const x = this.playfieldX;
+        
+        this.context.strokeStyle = 'rgba(40,80,80,0.5)';
+        this.context.lineWidth = 2;
+
+        for (let InnerY = y; InnerY < this.playfieldHeight; InnerY += this.blockHeight) {
+            for (let InnerX = x; InnerX <= this.playfieldWidth - this.blockWidth; InnerX += this.blockWidth) {
+                this.context.strokeRect(InnerX,InnerY,this.blockWidth,this.blockHeight);
+            }
+        }
+    }
+
     renderBlock(x, y, width, height, color) {
         this.context.fillStyle = color;
         this.context.strokeStyle = 'white';
@@ -147,6 +161,7 @@ export default class View {
     
     render (state) {
         this.clearScreen();
+        this.renderPlayfieldInnerBorder();
         this.renderPlayfield(state);
         this.renderPanel(state);
     }
