@@ -6,6 +6,7 @@ export default class Controller {
         this.timerId = null;
 
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
+        document.addEventListener('keyup', this.handleKeyUp.bind(this));
 
         this.view.renderStartScreen();
     }
@@ -36,6 +37,10 @@ export default class Controller {
         this.startTimer();
     }
 
+    reset() {
+        this.game.reset();
+    }
+
     startTimer() {
         const speed = 1000 - this.game.getState().level * 100;
 
@@ -55,16 +60,14 @@ export default class Controller {
 
 
     handleKeyDown(event) {
-        if (this.isPlaying) {
+        const state = this.game.getState();
+
+        if (this.isPlaying && state.isGameOver === false) {
             switch (event.keyCode) {
                 case 13: // enter
                     if (this.isPlaying) {
                         this.pause();
                         this.view.renderPauseScreen();
-                    }
-                    else {
-                        this.play();
-                        this.updateView();
                     }
                     break;
                 case 37: // left arrow
@@ -80,6 +83,7 @@ export default class Controller {
                     this.updateView();
                     break;
                 case 40: // down arrow
+                    this.stopTimer();
                     game.movePieceDown();
                     this.updateView();
                     break;
@@ -88,15 +92,30 @@ export default class Controller {
         else {
             switch (event.keyCode) {
                 case 13: // enter
-                    if (this.isPlaying) {
+                    if (state.isGameOver === true) {
+                        this.reset();
+                        this.play();
+                        console.log('Enter is pressed while isGameOver === true');
+                    }
+                    else if (this.isPlaying) {
                         this.pause();
+                        console.log('Enter is pressed while isPlaying === true2');
                     }
                     else {
                         this.play();
+                        console.log('Enter is pressed while isPlaying === false2');
                     }
                     this.updateView();
                     break;
             }
+        }
+    }
+
+    handleKeyUp(event) {
+        switch (event.keyCode) {
+            case 40: // down arrow
+                this.startTimer();
+                break;
         }
     }
 }

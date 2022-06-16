@@ -271,5 +271,13 @@ export default class Game {
         this.activePiece = this.nextPiece;
         this.nextPiece = this.createPiece();
     }
-
+        
+    reset() { // method to restart the game
+        this.score = 0; // setting zero score for start
+        this.lines = 0; // setting amount of fullfiled lines
+        this.topOut = false;
+        this.playfield = this.createPlayfield(); // creating empty playfield
+        this.activePiece = this.createPiece(); // creating random piece (tetramino)
+        this.nextPiece = this.createPiece(); // preparing next random piece
+    }
 };
